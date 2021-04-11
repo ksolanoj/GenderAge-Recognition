@@ -44,34 +44,31 @@ ageNet = cv2.dnn.readNetFromCaffe(ageProto, ageModel)
 genderNet = cv2.dnn.readNetFromCaffe(genderProto, genderModel)
 faceNet = cv2.dnn.readNet(faceModel, faceProto)
 
-padding = 20
+def detectImage(imagePath, imageName):
+    response = []
+    padding = 20
+    frame = cv2.imread(imagePath)
+    frameFace, bboxes = getFaceBox(faceNet, frame)
+    if not bboxes:
+        response.append({"Message":"No Faces Detected on the image."})
+    for bbox in bboxes:        
+        face = frame[max(0,bbox[1]-padding):min(bbox[3]+padding,frame.shape[0]-1),max(0,bbox[0]-padding):min(bbox[2]+padding, frame.shape[1]-1)]
+        blob = cv2.dnn.blobFromImage(face, 1.0, (227, 227), MODEL_MEAN_VALUES, swapRB=False)
 
-t = time.time()
-frame = cv2.imread('./keneth.jpg')
-frameFace, bboxes = getFaceBox(faceNet, frame)
-if not bboxes:
-    print("No face Detected, Checking next frame")
-for bbox in bboxes:        
-    face = frame[max(0,bbox[1]-padding):min(bbox[3]+padding,frame.shape[0]-1),max(0,bbox[0]-padding):min(bbox[2]+padding, frame.shape[1]-1)]
+        genderNet.setInput(blob)
+        genderPreds = genderNet.forward()
+        gender = genderList[genderPreds[0].argmax()]
+        genderCofidence = genderPreds[0].max()
 
-    blob = cv2.dnn.blobFromImage(face, 1.0, (227, 227), MODEL_MEAN_VALUES, swapRB=False)
-    genderNet.setInput(blob)
-    genderPreds = genderNet.forward()
-    gender = genderList[genderPreds[0].argmax()]
+        ageNet.setInput(blob)
+        agePreds = ageNet.forward()
+        age = ageList[agePreds[0].argmax()]
+        ageConfidence = agePreds[0].max()
+
+        response.append({"gender":gender, "genderCofidence":genderCofidence, "age": age, "ageCofidence":ageConfidence})
+        cv2.imwrite('detected/{0}.jpg'.format(imageName), frameFace)
+    return response
     
-    print("Gender : {}, confidence = {:.3f}".format(gender, genderPreds[0].max()))
-
-    ageNet.setInput(blob)
-    agePreds = ageNet.forward()
-    age = ageList[agePreds[0].argmax()]
-    
-    print("Age : {}, confidence = {:.3f}".format(age, agePreds[0].max()))
-
-    label = "{},{}".format(gender, age)
-    cv2.putText(frameFace, label, (bbox[0]-5, bbox[1]-10), cv2.FONT_HERSHEY_SIMPLEX, 0.75, (255, 255, 255), 2, cv2.LINE_AA)
-    cv2.imshow("Age Gender Demo", frameFace)
-    cv2.waitKey(0)
-print("Time : {:.3f}".format(time.time() - t))
 
 
 
