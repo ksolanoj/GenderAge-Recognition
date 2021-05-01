@@ -25,24 +25,13 @@ def uploadImage(imageName):
     globalPath = "detected/{0}.jpg".format(imageName)
     storage.child(globalPath).put(globalPath)
     url = storage.child(globalPath).get_url(user['idToken'])
-    print(url)
-    return
+    return url
 
 def downloadImage(imageName):
     globalPath = "uploaded/{0}.jpg".format(imageName)
     downloadPath = 'downloaded/{0}.jpg'.format(imageName)
     storage.child(globalPath).download(downloadPath)
     return detectImage(downloadPath, imageName)
-
-#print(downloadImage('image3'))
-uploadImage('image3')
-
-
-
-
-
-
-
 
 
 

@@ -31,14 +31,14 @@ ageList = ['(0-2)', '(4-6)', '(8-12)', '(15-20)', '(25-32)', '(38-43)', '(48-53)
 
 genderList = ['Male', 'Female']
 
-faceProto = './models/opencv_face_detector.pbtxt'
-faceModel = './models/opencv_face_detector_uint8.pb'
+faceProto = 'models/opencv_face_detector.pbtxt'
+faceModel = 'models/opencv_face_detector_uint8.pb'
 
-ageProto = './models/age_deploy.prototxt'
-ageModel = './models/age_net.caffemodel'
+ageProto = 'models/age_deploy.prototxt'
+ageModel = 'models/age_net.caffemodel'
 
-genderProto = './models/gender_deploy.prototxt'
-genderModel = './models/gender_net.caffemodel'
+genderProto = 'models/gender_deploy.prototxt'
+genderModel = 'models/gender_net.caffemodel'
 
 ageNet = cv2.dnn.readNetFromCaffe(ageProto, ageModel)
 genderNet = cv2.dnn.readNetFromCaffe(genderProto, genderModel)
@@ -65,7 +65,7 @@ def detectImage(imagePath, imageName):
         age = ageList[agePreds[0].argmax()]
         ageConfidence = agePreds[0].max()
 
-        response.append({"gender":gender, "genderCofidence":genderCofidence, "age": age, "ageCofidence":ageConfidence})
+        response.append({"gender":gender, "genderCofidence":"{0}".format(genderCofidence), "age":"{0}".format(age), "ageCofidence":"{0}".format(ageConfidence)})
         cv2.imwrite('detected/{0}.jpg'.format(imageName), frameFace)
     return response
     
