@@ -1,11 +1,10 @@
 # Imports
+import os
 from flask import Flask, jsonify, request
 from FirebaseManager import (uploadImage, downloadImage)
 
-
 # App creation
 app = Flask(__name__)
-
 
 # Constants
 PORT = 4000
@@ -15,9 +14,7 @@ RESPONSE_TEMPLATE = {
     "imageURL": ""
 }
 
-
 # Routes
-
 @app.route('/', methods = ['GET'])
 def test():
     return '<h1> Gender&Age Recognition API <h1/>'
@@ -30,8 +27,11 @@ def detectFaces():
     imageURL = uploadImage(imageName)
     finalResponse['response'] = response
     finalResponse['imageURL'] = imageURL
+    if os.path.isfile("./detected/{0}.jpg".format(imageName)) and os.path.isfile("./downloaded/{0}.jpg".format(imageName)):
+        os.remove("./detected/{0}.jpg".format(imageName))
+        os.remove("./downloaded/{0}.jpg".format(imageName))
     return jsonify(finalResponse)
 
 if __name__ == '__main__':
-    app.run(debug = True, port = PORT)
+    app.run(port = PORT)
 
