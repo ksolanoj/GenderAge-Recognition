@@ -29,6 +29,4 @@ def detectFaces():
         os.remove("./downloaded/{0}.jpg".format(imageName))
     return jsonify(finalResponse)
 
-if __name__ == '__main__':
-    app.run(port = PORT)
 
