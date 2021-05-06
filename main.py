@@ -6,9 +6,6 @@ from FirebaseManager import (uploadImage, downloadImage)
 # App creation
 app = Flask(__name__)
 
-# Constants
-PORT = 4000
-
 RESPONSE_TEMPLATE = {
     "response": None,
     "imageURL": ""
