@@ -1,10 +1,13 @@
 # Imports
 import os
 from flask import Flask, jsonify, request
+from flask_cors import CORS
 from FirebaseManager import (uploadImage, downloadImage)
 
 # App creation
 app = Flask(__name__)
+CORS(app)
+
 
 RESPONSE_TEMPLATE = {
     "response": None,
